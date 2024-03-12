@@ -1,3 +1,5 @@
+from tabnanny import verbose
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -20,7 +22,7 @@ class YoutubeFilterTracker(models.Model):
 
     title = models.CharField(max_length=255)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.PositiveBigIntegerField(null=True, blank=True)
+    category = models.PositiveBigIntegerField(verbose_name='Category ID')
     start_date = models.DateTimeField(auto_now=False)
     end_date = models.DateTimeField(auto_now=False)
     channels = models.TextField()

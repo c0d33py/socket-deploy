@@ -1,3 +1,5 @@
+import re
+
 from rest_framework import serializers
 
 from .models import YoutubeFilterTracker
@@ -7,6 +9,8 @@ class YoutubeFilterTrackerSerializer(serializers.ModelSerializer):
     """
     Youtube filter tracker serializer.
     """
+
+    title = serializers.CharField(required=False)
 
     class Meta:
         model = YoutubeFilterTracker
