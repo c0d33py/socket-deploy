@@ -28,9 +28,10 @@ class YoutubeFilterTrackerSerializer(serializers.ModelSerializer):
 
     def get_date_range_string(self, range_stamp: str):
         start_date, end_date = range_stamp.split(' - ')
-        # Convert string to datetime object
-        dt_object = datetime.strptime(start_date, '%m/%d/%Y, %I:%M %p')
-        dt_object2 = datetime.strptime(end_date, '%m/%d/%Y, %I:%M %p')
+
+        # Corrected format for day/month/year, hour:minute AM/PM
+        dt_object = datetime.strptime(start_date, '%d/%m/%Y, %I:%M %p')
+        dt_object2 = datetime.strptime(end_date, '%d/%m/%Y, %I:%M %p')
 
         # Add timezone information (assuming UTC for this example)
         parsed_utc = dt_object.replace(tzinfo=timezone.utc)

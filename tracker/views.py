@@ -44,10 +44,19 @@ class YoutubeFilterTrackerViewSetAPI(ModelViewSet):
         user = self.request.user
         obj = serializer.save(created_by=user)
 
+        _ids = [
+            # Generate unique random strings
+            'leEw3z',
+            '7eEw3z',
+            'weL33z',
+            'wRe23z',
+            'wRe43z',
+        ]
+
         task = channel_statistics_api_task.delay(
             **{
                 'instance': obj.id,
-                'channel_ids': obj.channels,
+                'channel_ids': _ids,
                 'start_date': obj.start_date,
                 'end_date': obj.end_date,
                 'user_id': user.id,

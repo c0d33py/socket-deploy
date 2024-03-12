@@ -31,8 +31,20 @@
                         {{form.video_tags | as_crispy_field}}
                     </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <hr>
+            <div class="task-info__item">
+                <p>Task ID: <span class="task-info__value">1</span></p>
+            </div>
+            <div class="task-info__item">
+                <p>Task Status: <span class="task-info__value">Pending</span></p>
+            </div>
+            <!-- progress bar -->
+            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0" aria-valuemin="0"
+                aria-valuemax="100">
+                <div class="progress-bar" style="width: 0%"></div>
+            </div>
         </div>
     </div>
     <!-- jquery -->

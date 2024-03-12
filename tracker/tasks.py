@@ -13,43 +13,42 @@ logger = logging.getLogger(__name__)
 channel_layer = get_channel_layer()
 
 
-def send_update(message, user_id):
+def send_update(user_id, **kwargs):
     group_name = f'user_{user_id}'
     async_to_sync(channel_layer.group_send)(
         group_name,
         {
             'type': 'task_thread',
-            'message': message,
+            'message': kwargs,
         },
     )
 
 
 @shared_task
 def channel_statistics_api_task(*args, **kwargs):
-    user_id = kwargs.get('user_id')
     """
     A Celery task to call the YouTube API and fetch channel statistics.
     """
-    try:
-        # Inform the user that the task has started
-        send_update('Task started.', user_id)
+    user_id = kwargs.get('user_id', None)
+    channel_ids = kwargs.get('channel_ids', [])
+    total_channels = len(channel_ids)
 
-        # Simulate some task progress
-        for i in range(5):
+    try:
+        # Send to as message current_loop of /total_channels channels
+
+        for index, channel_id in enumerate(channel_ids, start=1):
             # Update progress every iteration
-            send_update({'progress': i}, user_id)
+            task_info = {
+                'status': 'PROGRESS',
+                'channeels': f'{index}/{total_channels}',
+                'progress': f'{(index / total_channels) * 100:.2f}%',
+            }
+            send_update(user_id, **task_info)
+
             # Simulate work being done
             import time
 
             time.sleep(1)
-
-        # Get the result or status of the Celery task
-        result = 'Task completed!'
-        # You can also use tracker.result to get the AsyncResult object and extract more information if needed
-        # For example, result = tracker.result.result
-
-        # Inform the user that the task has completed
-        send_update(result, user_id)
 
         # Log the task arguments
         logging.info(f"Task arguments: {json.dumps(kwargs, cls=DjangoJSONEncoder)}")
@@ -57,8 +56,8 @@ def channel_statistics_api_task(*args, **kwargs):
 
     except Exception as e:
         # Inform the user about any errors
-        send_update(f'Error: {str(e)}', user_id)
+        send_update(user_id, status=f'Error: {str(e)}')
         print(f'Error in channel statistics api task: {str(e)}')
     finally:
         # Close the WebSocket connection
-        send_update('CLOSE_CONNECTION', user_id)
+        send_update(user_id, status='CLOSE_CONNECTION')
