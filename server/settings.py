@@ -36,7 +36,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
 # Application definition
 INSTALLED_APPS = [
-    'channels',
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_celery_beat',
     'django_filters',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'tracker',
 ]
 
@@ -79,8 +81,12 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'server.wsgi.application'
-# ASGI_APPLICATION = 'server.asgi.application'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+# WSGI_APPLICATION = 'server.wsgi.application'
+ASGI_APPLICATION = 'server.asgi.application'
 
 
 # Database

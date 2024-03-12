@@ -4,13 +4,24 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from .forms import YoutubeFilterTrackerForm
 from .models import YoutubeFilterTracker
 from .serializers import YoutubeFilterTrackerSerializer
 from .tasks import channel_statistics_api_task
 
 
 class IndexTemplateRender(TemplateView):
+    """
+    Index template view.
+    """
+
     template_name = 'index.html'
+    form_class = YoutubeFilterTrackerForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class()
+        return context
 
 
 class YoutubeFilterTrackerViewSetAPI(ModelViewSet):
@@ -83,22 +94,3 @@ class YoutubeFilterTrackerViewSetAPI(ModelViewSet):
             status=status.HTTP_200_OK,
             data=self.get_serializer(obj).data,
         )
-
-    # def create(self, request, *args, **kwargs):
-    #     # Set the privacy level to private
-    #     obj = request.data
-    #     ht_id = serializer.data['id']
-
-    #     task = channel_statistics_api_task.delay(
-    #         instance=ht_id,
-    #         channel_ids=channel_ids,
-    #         strt_date=start_date,
-    #         end_date=end_date,
-    #     )
-
-    #     context = {
-    #         'tracker_id': ht_id,
-    #         'task_id': task.id,
-    #     }
-
-    #     return super().create(request, *args, **kwargs)
