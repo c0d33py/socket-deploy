@@ -34,21 +34,30 @@ def channel_statistics_api_task(*args, **kwargs):
     total_channels = len(channel_ids)
 
     try:
-        # Send to as message current_loop of /total_channels channels
+        # Send initial update
+        send_update(
+            user_id,
+            status='Processing',
+            channels='Initializing...',
+            progress='0%',
+        )
 
         for index, channel_id in enumerate(channel_ids, start=1):
             # Update progress every iteration
-            task_info = {
-                'status': 'PROGRESS',
-                'channeels': f'{index}/{total_channels}',
-                'progress': f'{(index / total_channels) * 100:.2f}%',
-            }
-            send_update(user_id, **task_info)
-
-            # Simulate work being done
+            progress_percentage = (index / total_channels) * 100
+            send_update(
+                user_id,
+                status='Processing',
+                channels=f'{index}/{total_channels}',
+                progress=f'{progress_percentage:.2f}%',
+            )
             import time
 
+            # Simulate work being done
             time.sleep(1)
+
+        # Send completion message
+        send_update(user_id, status='Completed')
 
         # Log the task arguments
         logging.info(f"Task arguments: {json.dumps(kwargs, cls=DjangoJSONEncoder)}")
@@ -56,8 +65,9 @@ def channel_statistics_api_task(*args, **kwargs):
 
     except Exception as e:
         # Inform the user about any errors
-        send_update(user_id, status=f'Error: {str(e)}')
-        print(f'Error in channel statistics api task: {str(e)}')
+        error_message = f'Error: {str(e)}'
+        send_update(user_id, status=error_message)
+        logging.error(f'Error in channel statistics api task: {error_message}')
     finally:
         # Close the WebSocket connection
         send_update(user_id, status='CLOSE_CONNECTION')
